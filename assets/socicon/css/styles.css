@@ -968,7 +968,14 @@ button {
 }
 .features {
   display: flex;
-  padding-top: 20px;
+  flex-direction: row; /* side by side on big screens */
+    padding-top: 20px;
+}
+
+@media (max-width: 768px) {
+.features {
+    flex-direction: column; /* stacked on small screens */
+  }
 }
 .feature1 {
   background-color: rgb(118, 193, 111);
