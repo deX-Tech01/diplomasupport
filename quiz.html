@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz App</title>
+
+<style>
+body {
+  font-family: Arial;
+  background: #f4f4f4;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.quiz-container {
+  background: white;
+  padding: 20px;
+  width: 400px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+button {
+  margin: 5px;
+  padding: 10px;
+  width: 100%;
+  cursor: pointer;
+}
+
+#skip {
+  background: black;
+  color: white;
+}
+
+.correct {
+  background-color: blue;
+  color: white;
+}
+
+.wrong {
+  background-color: red;
+  color: white;
+}
+
+button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.hide {
+  display: none;
+}
+
+#result-buttons {
+  margin-top: 15px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="quiz-container">
+  <h3 id="question"></h3>
+  <div id="answers"></div>
+  <button id="skip">Skip</button>
+
+  <h3 id="result" class="hide"></h3>
+
+  <div id="result-buttons" class="hide">
+    <button id="homeBtn">Return to Home</button>
+    <button id="retryBtn">Try Again</button>
+  </div>
+</div>
+
+<script>
+
+let answered = false;
+let index = 0;
+let score = 0;
+let answeredCount = 0;
+
+const TOTAL_QUESTIONS = 20;
+
+// 🔥 QUESTION BANK
+const questionBank = [ 
+{q: "What is the basic definition of a contract?", a:["A social agreement","A legally binding agreement","A moral obligation","A written promise only"], correct:1}, 
+{q: "Which of the following is NOT an essential element of a valid contract?", a:["Offer","Acceptance","Intention to create legal relations","Goods and services"], correct:3}, 
+{q: "What is an offer in contract law?", a:["A final agreement","A statement of willingness to contract on certain terms","A negotiation","A refusal"], correct:1}, 
+{q: "What is misrepresentation?", a:["A mistake in writing","A false statement of fact inducing a party to enter a contract","A breach of contract","A legal excuse"], correct:1}, 
+{q: "What is the effect of a void contract?", a:["It is fully enforceable","It is valid until canceled","It has no legal effect","It requires court approval"], correct:2}, 
+{q: "Which remedy aims to put the injured party in the position they would have been in if the contract was performed?", a:["Injunction","Specific performance","Damages","Rescission"], correct:2}, {q: "Which case established that advertisements are usually invitations to treat?", a:["Carlill v Carbolic Smoke Ball Co","Fisher v Bell","Donoghue v Stevenson","Hadley v Baxendale"], correct:1}, 
+{q: "What is the postal rule?", a:["Acceptance is valid when received","Acceptance is valid when posted","Acceptance must be written","Acceptance must be verbal"], correct:1}, 
+{q: "What does “privity of contract” mean?", a:["Only parties to a contract can sue or be sued on it","Anyone can enforce a contract","Contracts must be private","Contracts must be written"], correct:0}, 
+{q: "Which case is the locus classicus for unilateral contracts?", a:["Carlill v Carbolic Smoke Ball Co","Fisher v Bell","Hyde v Wrench","Balfour v Balfour"], correct:0}, 
+{q: "Which case established the postal rule?", a:["Entores v Miles Far East","Adams v Lindsell","Carlill v Carbolic Smoke Ball Co","Felthouse v Bindleys"], correct:1}, 
+{q: "What is a contract of sale of goods?", a:["A contract for services","A contract where the seller transfers or agrees to transfer property in goods for a price","A gift agreement","A lease agreement"], correct:1}, 
+{q: "What does “property in goods” mean?", a:["Ownership of the goods","Possession of the goods","Delivery of the goods","Payment for goods"], correct:0},
+{q: "What is the supreme law of Nigeria?", a:["National Assembly Act","Constitution of the Federal Republic of Nigeria, 1999 (as amended)","Supreme Court Rule","Case Law"], correct:1}, 
+{q: "Which section of the Constitution establishes its supremacy?", a:["Section 1","Section 2","Section 112","Section 3(1)"], correct:0}, 
+{q: "The doctrine of separation of powers in Nigeria involves which arms of government?", a:["Federal, State and Local","Executive, Legislature and Judiciary","Army, Police and Navy","Constitution, Acts and Laws"], correct:1}, 
+{q: "Judicial powers of the Federation are vested in:", a:["The President","The Courts","The Chief Judge","The Legislature"], correct:1}, 
+{q: "Fundamental Rights are contained in which Chapter of the Constitution?", a:["Chapter II","Chapter IV","Chapter V","None of the above"], correct:1}, 
+{q: "Local Government functions are provided in:", a:["Fist Schedule","Section 13","Fourth Schedule","Sixth Schedule"], correct:2}, {q: "Which case established that advertisements are usually invitations to treat?", a:["Carlill v Carbolic Smoke Ball Co","Fisher v Bell","Donoghue v Stevenson","Hadley v Baxendale"], correct:1}, 
+{q: "Who has the power to declare a state of emergency?", a:["The Senate President","The Courts","The President","The Constitution"], correct:2}, 
+{q: "Which case established that Chapter II provisions are generally non-justiciable?", a:["Adesanya v President of Nigeria","Attorney-General of Ondo State v Attorney-General of the Federation","Okogie v Attorney-General of Lagos State","Fawehinmi v Abacha"], correct:2}, 
+{q: "The right to fair hearing is guaranteed under:", a:["Section 39","Section 35","Section 12","Section 36"], correct:3}, 
+{q: "Which section vests executive powers of the Federation in the President?", a:["Section 4","Section 9","Section 2","Section 5"], correct:3}, 
+{q: "In A.G. Federation v Abubakar, the court held that the Vice President:", a:["A contract for services","A contract where the seller transfers or agrees to transfer property in goods for a price","A gift agreement","A lease agreement"], correct:1}, 
+{q: "What does “property in goods” mean?", a:["Ownership of the goods","Possession of the goods","Delivery of the goods","Payment for goods"], correct:0},
+ // 👉 add more to reach 60+
+];
+
+// 🔀 Shuffle
+function shuffle(array) {
+  return array.sort(() => Math.random() - 0.5);
+}
+
+let shuffledQuestions = shuffle([...questionBank]);
+
+const questionEl = document.getElementById("question");
+const answersEl = document.getElementById("answers");
+const resultEl = document.getElementById("result");
+const skipBtn = document.getElementById("skip");
+
+const resultButtons = document.getElementById("result-buttons");
+const homeBtn = document.getElementById("homeBtn");
+const retryBtn = document.getElementById("retryBtn");
+
+// LOAD QUESTION
+function loadQuestion() {
+  answered = false;
+  skipBtn.disabled = false;
+
+  if (answeredCount >= TOTAL_QUESTIONS) {
+    showResult();
+    return;
+  }
+
+  const current = shuffledQuestions[index];
+
+  questionEl.textContent = `${answeredCount + 1}. ${current.q}`;
+  answersEl.innerHTML = "";
+
+  current.a.forEach((option, i) => {
+    const btn = document.createElement("button");
+    btn.textContent = `${String.fromCharCode(65 + i)}. ${option}`;
+    btn.onclick = () => checkAnswer(i);
+    answersEl.appendChild(btn);
+  });
+}
+
+// CHECK ANSWER
+function checkAnswer(selected) {
+  if (answered) return;
+  answered = true;
+  skipBtn.disabled = true;
+
+  const buttons = document.querySelectorAll("#answers button");
+  const correctIndex = shuffledQuestions[index].correct;
+
+  buttons.forEach((btn, i) => {
+    btn.disabled = true;
+
+    if (i === correctIndex) btn.classList.add("correct");
+    if (i === selected && i !== correctIndex) btn.classList.add("wrong");
+  });
+
+  if (selected === correctIndex) score++;
+
+  answeredCount++;
+
+  setTimeout(() => {
+    index++;
+    loadQuestion();
+  }, 1000);
+}
+
+// SKIP
+skipBtn.onclick = () => {
+  if (answered) return;
+
+  answeredCount++;
+  index++;
+  loadQuestion();
+};
+
+// RESULT
+function showResult() {
+  questionEl.classList.add("hide");
+  answersEl.classList.add("hide");
+  skipBtn.classList.add("hide");
+
+  let grade = "";
+  if (score >= 16) grade = "A";
+  else if (score >= 12) grade = "B";
+  else if (score >= 8) grade = "C";
+  else grade = "F";
+
+  resultEl.classList.remove("hide");
+  resultEl.textContent = `Score: ${score}/20 | Grade: ${grade}`;
+
+  resultButtons.classList.remove("hide");
+}
+
+// RETRY
+retryBtn.onclick = () => {
+  index = 0;
+  score = 0;
+  answeredCount = 0;
+
+  shuffledQuestions = shuffle([...questionBank]);
+
+  resultEl.classList.add("hide");
+  resultButtons.classList.add("hide");
+
+  questionEl.classList.remove("hide");
+  answersEl.classList.remove("hide");
+  skipBtn.classList.remove("hide");
+
+  loadQuestion();
+};
+
+// HOME
+homeBtn.onclick = () => {
+  location.reload(); // or redirect
+};
+
+// START
+loadQuestion();
+
+</script>
+
+</body>
+</html>

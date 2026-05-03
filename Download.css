@@ -1,0 +1,120 @@
+h2 {
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: #1b3061;
+}
+
+/* Container: holds all .forLLB sections */
+.container {
+  background-color: white;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+/* Top-level course sections (.forLLB1–.forLLB5) */
+.container > div[class^="forLLB"] {
+  flex: 1 1 calc(50% - 20px); /* two per row */
+  box-sizing: border-box;
+  background: #fff;
+  padding: 15px 20px;
+  border: 3px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  transition: box-shadow 0.3s;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.container > div[class^="forLLB"]:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Inner boxes (forLLB-sub and LEGAL METHOD details) */
+.forLLB-sub,
+.forLLB1 details {
+  background: #fff;
+  border: 2px solid #ddd;
+  border-radius: 10px;
+  width: 260px;
+  box-shadow:  2px 6px rgba(0,0,0,0.08);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.forLLB-sub:hover,
+.forLLB1 details:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+}
+
+/* Summary (the title like “LEGAL METHOD”) */
+summary {
+  font-weight: 600;
+  font-size: 16px;
+  color: #1b3061;
+  cursor: pointer;
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+  list-style: none;
+}
+
+summary::-webkit-details-marker {
+  display: none;
+}
+summary::after {
+  content: "▾";
+  float: right;
+  transition: transform 0.2s ease;
+}
+details[open] summary::after {
+  transform: rotate(180deg);
+}
+
+/* List inside details */
+ul {
+  margin: 0;
+  padding: 10px 15px 15px;
+  list-style: none;
+}
+ul li {
+  margin-bottom: 8px;
+  border: 1px solid #e3e3e3;
+  border-radius: 6px;
+  padding: 8px;
+  transition: background 0.2s;
+}
+ul li:hover {
+  background: #f1f5ff;
+}
+
+/* Links inside list */
+ul li a {
+  text-decoration: none;
+  color: #1b3061;
+  display: block;
+}
+ul li a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive: one column on small screens */
+@media (max-width: 768px) {
+  .container > div[class^="forLLB"] {
+    flex: 1 1 100%;
+  }
+}
+.return-btn{
+  display: block;
+  text-align: center;
+  margin-top: 10vh;
+  font-size: 20px;
+  text-decoration: none;
+  color: #0b74de;
+  font-weight: 500;
+}

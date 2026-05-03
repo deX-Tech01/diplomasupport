@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "5Gfiles",
+			"path": "../../../../5Gfiles"
+		},
+		{
+			"name": "5GdownLoad",
+			"path": "../../.."
+		}
+	],
+	"settings": {}
+}
