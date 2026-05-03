@@ -496,3 +496,47 @@
 .mobi-mbri-zoom-out:before {
   content: "\e99c";
 }
+.image1 {
+  height: 40px;
+  width: 40px;
+  border-radius: 50px;
+  border: 1px solid purple;
+  margin-left: -20px;
+}
+.image-container {
+  display: flex;
+  align-items: center;
+  padding: 30px;
+  gap: 5px;
+}
+.image-container label {
+  color: rgb(48, 39, 26);
+}
+button {
+  display: block;
+  margin-top: 10px;
+  padding: 10px;
+  background: blue;
+  color: white;
+}
+.logo-feature {
+  height: 40px;
+  width: 40px;
+  margin-top: 20px;
+}
+.features {
+  display: flex;
+  padding-top: 20px;
+}
+.feature1 {
+  background-color: rgb(118, 193, 111);
+  padding: 20px;
+  border-radius: 20px;
+  box-shadow: 0px 4px 30px rgb(123, 103, 103);
+}
+.feature1 p{
+    text-align: center;
+}
+.feature1 h3{
+    font-weight: bold;
+}
