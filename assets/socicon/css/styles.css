@@ -1067,3 +1067,20 @@ background: rgb(67, 185, 67);
         transform: translateX(-50%);
       }
     }
+.typing{
+    font-size:20px;
+    line-height:1.5;
+    color:rgb(19, 17, 17);
+
+    opacity:0;
+    transform:translateY(30px);
+
+    animation: revealText 3s ease forwards;
+}
+
+@keyframes revealText{
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
